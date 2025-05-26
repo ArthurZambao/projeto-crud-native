@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 interface Produto {
@@ -19,6 +19,8 @@ interface Produto {
   preco: number;
   quantidade: number;
 }
+
+const STORAGE_KEY = '@produtos_estoque';
 
 export default function App() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -39,6 +41,35 @@ export default function App() {
     preco: false,
     quantidade: false,
   });
+
+  // Carregar produtos do AsyncStorage quando o app iniciar
+  useEffect(() => {
+    carregarProdutos();
+  }, []);
+
+  // Salvar produtos no AsyncStorage sempre que a lista mudar
+  useEffect(() => {
+    salvarProdutos(produtos);
+  }, [produtos]);
+
+  const salvarProdutos = async (lista: Produto[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+    } catch (e) {
+      console.error('Erro ao salvar produtos:', e);
+    }
+  };
+
+  const carregarProdutos = async () => {
+    try {
+      const dados = await AsyncStorage.getItem(STORAGE_KEY);
+      if (dados) {
+        setProdutos(JSON.parse(dados));
+      }
+    } catch (e) {
+      console.error('Erro ao carregar produtos:', e);
+    }
+  };
 
   // Validação dos campos
   const validarCampos = () => {
@@ -79,23 +110,6 @@ export default function App() {
     limparFormulario();
   };
 
-  // Função para excluir produto
-  const excluirProduto = (id: string) => {
-    Alert.alert('Confirmação', 'Deseja excluir este produto?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: () => {
-          setProdutos(produtos.filter((p) => p.id !== id));
-          if (modoEdicao && produtoEditando?.id === id) {
-            limparFormulario();
-          }
-        },
-      },
-    ]);
-  };
-
   // Função para editar produto
   const editarProduto = (produto: Produto) => {
     setModoEdicao(true);
@@ -132,9 +146,6 @@ export default function App() {
       <View style={styles.acoes}>
         <TouchableOpacity onPress={() => editarProduto(item)} style={styles.botaoEditar}>
           <Text style={styles.acaoTexto}>✏️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => excluirProduto(item.id)} style={styles.botaoExcluir}>
-          <Text style={styles.acaoTexto}>🗑️</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -289,9 +300,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   botaoEditar: {
-    padding: 4,
-  },
-  botaoExcluir: {
     padding: 4,
   },
   acaoTexto: {

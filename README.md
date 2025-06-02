@@ -20,8 +20,7 @@ Aplicativo mobile desenvolvido em **React Native** para gerenciar produtos em es
 ## 📱 Capturas de Tela
 
 - Imagem da estrutura principal do site
-![image](https://github.com/user-attachments/assets/b60f6b08-3c51-4ebb-8f3b-7502210d28be)
-
+![image](https://github.com/user-attachments/assets/e4cc7b2c-05e0-4bde-b02c-a1768f7912e8)
 
 ## 📦 Instalação
 

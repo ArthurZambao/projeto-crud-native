@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 interface Erros {
@@ -37,6 +38,19 @@ export const FormularioProduto: React.FC<FormularioProdutoProps> = ({
   onSalvar,
   onCancelar,
 }) => {
+
+  const handleSalvar = () => {
+    onSalvar();
+
+    Alert.alert(
+      'Sucesso!',
+      modoEdicao
+        ? 'Produto editado com sucesso!'
+        : 'Produto adicionado com sucesso!',
+      [{ text: 'OK' }]
+    );
+  };
+
   return (
     <View>
       <Text style={styles.subtitulo}>
@@ -57,7 +71,9 @@ export const FormularioProduto: React.FC<FormularioProdutoProps> = ({
         value={categoria}
         onChangeText={(text) => onChangeCampo('categoria', text)}
       />
-      {erros.categoria && <Text style={styles.mensagemErro}>Campo inválido</Text>}
+      {erros.categoria && (
+        <Text style={styles.mensagemErro}>Campo inválido</Text>
+      )}
 
       <TextInput
         style={[styles.input, erros.preco && styles.inputErro]}
@@ -75,11 +91,16 @@ export const FormularioProduto: React.FC<FormularioProdutoProps> = ({
         onChangeText={(text) => onChangeCampo('quantidade', text)}
         keyboardType="number-pad"
       />
-      {erros.quantidade && <Text style={styles.mensagemErro}>Campo inválido</Text>}
+      {erros.quantidade && (
+        <Text style={styles.mensagemErro}>Campo inválido</Text>
+      )}
 
       <TouchableOpacity
-        style={[styles.botaoAdicionar, modoEdicao && { backgroundColor: '#f39c12' }]}
-        onPress={onSalvar}
+        style={[
+          styles.botaoAdicionar,
+          modoEdicao && { backgroundColor: '#f39c12' },
+        ]}
+        onPress={handleSalvar}
       >
         <Text style={styles.textoBotao}>
           {modoEdicao ? '💾 Salvar Edição' : '+ Adicionar'}

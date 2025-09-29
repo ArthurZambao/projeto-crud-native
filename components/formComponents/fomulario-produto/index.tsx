@@ -39,17 +39,35 @@ export const FormularioProduto: React.FC<FormularioProdutoProps> = ({
   onCancelar,
 }) => {
 
+
   const handleSalvar = () => {
+    const camposComErro: string[] = [];
+
+    if (erros.nome) camposComErro.push('Nome');
+    if (erros.categoria) camposComErro.push('Categoria');
+    if (erros.preco) camposComErro.push('Preço');
+    if (erros.quantidade) camposComErro.push('Quantidade');
+
+    if (camposComErro.length > 0) {
+      Alert.alert(
+        'Erro',
+        `Por favor, corrija os seguintes campos:\n- ${camposComErro.join('\n- ')}`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
     onSalvar();
 
     Alert.alert(
       'Sucesso!',
       modoEdicao
-        ? 'Produto editado com sucesso!'
+        ? `Produto editado com sucesso!`
         : 'Produto adicionado com sucesso!',
       [{ text: 'OK' }]
     );
   };
+
 
   return (
     <View>
